@@ -7,11 +7,9 @@
 
 #pragma once
 
-#include <filesystem>
 #include <future>
 #include <mutex>
 #include <string>
-#include <tuple>
 #include <vector>
 
 #include "braft/file_system_adaptor.h"
@@ -39,7 +37,7 @@ namespace kiwi {
 // class EventLoop;
 class Binlog;
 
-enum ClusterCmdType {
+enum ClusterCmdType : int8_t {
   kNone,
   kJoin,
   kRemove,
