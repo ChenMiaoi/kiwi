@@ -89,7 +89,7 @@ braft::FileAdaptor* PosixFileSystemAdaptor::open(const std::string& path, int of
       new_meta.set_last_included_term(last_log_term);
       braft::ConfigurationEntry conf_entry;
       braft::ConfigurationEntry learner_conf_entry;
-      PRAFT.GetConfigurationByIndex(last_log_index, &conf_entry, &learner_conf_entry);
+      RAFT_INST.GetConfigurationByIndex(last_log_index, &conf_entry, &learner_conf_entry);
       new_meta.clear_peers();
       for (auto iter = conf_entry.conf.begin(); iter != conf_entry.conf.end(); ++iter) {
         *new_meta.add_peers() = iter->to_string();
