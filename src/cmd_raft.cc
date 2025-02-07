@@ -175,7 +175,7 @@ void RaftClusterCmd::DoCmdInit(PClient* client) {
     cluster_id = client->argv_[2];
     if (cluster_id.size() != RAFT_GROUPID_LEN) {
       client->SetRes(CmdRes::kInvalidParameter,
-                     "Cluster id must be " + std::to_string(RAFT_GROUPID_LEN) + " characters");
+                     "Cluster id must have " + std::to_string(RAFT_GROUPID_LEN) + " characters");
       return;
     }
   } else {
