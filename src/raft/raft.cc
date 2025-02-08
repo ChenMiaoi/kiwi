@@ -290,6 +290,16 @@ storage::LogIndex Raft::GetLastLogIndex(bool is_flush) {
   return node_->get_last_log_index(is_flush);
 }
 
+void Raft::GetConfigurationByIndex(const int64_t index, braft::ConfigurationEntry* conf,
+                                   braft::ConfigurationEntry* learner_conf) {
+  if (!node_) {
+    ERROR("Node is not initialized");
+    return;
+  }
+
+  node_->get_configuration(index, conf, learner_conf);
+}
+
 void Raft::SendNodeRequest(PClient* client) {
   assert(client);
 
