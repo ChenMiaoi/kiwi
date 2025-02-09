@@ -195,20 +195,14 @@ void KqueueEvent::DoRead(const struct kevent &event, const std::shared_ptr<Conne
 }
 
 void KqueueEvent::DoWrite(const struct kevent &event, const std::shared_ptr<Connection> &conn) {
-  auto ret = conn->net_event_->OnWritable();
-  if (ret == NE_ERROR) {
-    DoError(event, "DoWrite error,errno: " + std::to_string(errno));
-    return;
-  }
-  if (ret == 0) {
 #  ifdef HAVE_64BIT
-    auto conn_id = reinterpret_cast<uint64_t>(event.udata);
+  auto conn_id = reinterpret_cast<uint64_t>(event.udata);
 #  else
-    auto _conn_id = reinterpret_cast<uint64_t *>(event.udata);
-    uint64_t conn_id = *_conn_id;
-    delete event.udata;
+  auto _conn_id = reinterpret_cast<uint64_t *>(event.udata);
+  uint64_t conn_id = *_conn_id;
+  delete event.udata;
 #  endif
-    auto ret = conn->net_event_->OnWritable(conn_id, conn->fd_, this);
+  auto ret = conn->net_event_->OnWritable(conn_id, conn->fd_, this);
   if (ret == NE_ERROR) {
     DoError(event, "DoWrite error,errno: " + std::to_string(errno));
     return;
