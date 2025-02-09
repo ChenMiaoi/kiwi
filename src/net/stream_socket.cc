@@ -17,13 +17,13 @@ int StreamSocket::OnReadable(const std::shared_ptr<Connection> &conn, std::strin
 int StreamSocket::OnWritable(uint64_t id, int fd, BaseEvent *event) {
   if (sendData_.empty()) {
     if (!writeQueue_.Pop(sendData_)) {  // no data to send
-      writeReady_.store(false);
-      {
-        std::lock_guard lock(write_mutex_);
+      std::lock_guard lock(write_mutex_);
+      if (writeQueue_.Empty()) {  // double check
+        writeReady_ = false;
         event->DelWriteEvent(id, fd);
       }
-      return NE_OK;
     }
+    return NE_OK;
   }
   size_t ret = ::write(Fd(), sendData_.c_str() + sendPos_, sendData_.size() - sendPos_);
   if (ret == -1) {
@@ -40,9 +40,9 @@ int StreamSocket::OnWritable(uint64_t id, int fd, BaseEvent *event) {
     sendData_.clear();
     // determine if there is still data in the queue
     if (writeQueue_.Empty()) {
-      writeReady_.store(false);
-      {
-        std::lock_guard lock(write_mutex_);
+      std::lock_guard lock(write_mutex_);
+      if (writeQueue_.Empty()) {  // double check
+        writeReady_ = false;
         event->DelWriteEvent(id, fd);
       }
       return NE_OK;
