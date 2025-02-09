@@ -6,6 +6,7 @@
  */
 
 #include "stream_socket.h"
+#include "base_event.h"
 #include "log.h"
 
 namespace net {
@@ -55,12 +56,12 @@ void StreamSocket::SendPacket(std::string &&msg, std::function<void()> addWriteF
   do {
     sendOver = writeQueue_.Push(msg);
   } while (!sendOver);
-   if (!writeReady_.exchange(true)) {
-     std::lock_guard lock(write_mutex_);
-     if (addWriteFlag) {
-       addWriteFlag();
-     }
-   }
+  if (!writeReady_.exchange(true)) {
+    std::lock_guard lock(write_mutex_);
+    if (addWriteFlag) {
+      addWriteFlag();
+    }
+  }
 }
 
 // Read data from the socket
@@ -77,7 +78,8 @@ int StreamSocket::Read(std::string *readBuff) {
     }
     if (ret == 0) {
       return NE_CLOSE;
-    } else if (ret > 0) {
+    }
+    if (ret > 0) {
       readBuff->append(readBuffer, ret);
     }
     if (!NoBlock()) {

@@ -179,7 +179,7 @@ void EpollEvent::DoRead(const epoll_event &event, const std::shared_ptr<Connecti
 }
 
 void EpollEvent::DoWrite(const epoll_event &event, const std::shared_ptr<Connection> &conn) {
-  auto ret = conn->net_event_->OnWritable();
+  auto ret = conn->net_event_->OnWritable(event.data.u64, conn->fd_, this);
   if (ret == NE_ERROR) {
     DoError(event, "write error,errno: " + std::to_string(errno));
   }
