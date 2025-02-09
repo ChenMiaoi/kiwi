@@ -36,7 +36,7 @@ class ListenSocket : public BaseSocket {
   int OnWritable(uint64_t id, int fd, BaseEvent *event) override;
 
   // The function is cant be used
-  bool SendPacket(std::string &&msg) override;
+  void SendPacket(std::string &&msg, std::function<void()> addWriteFlag) override;
 
   // Initialize the socket and bind the address
   int Init() override;

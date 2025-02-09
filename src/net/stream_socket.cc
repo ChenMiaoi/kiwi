@@ -17,7 +17,10 @@ int StreamSocket::OnWritable(uint64_t id, int fd, BaseEvent *event) {
   if (sendData_.empty()) {
     if (!writeQueue_.Pop(sendData_)) {  // no data to send
       writeReady_.store(false);
-      event->DelWriteEvent(id, fd);
+      {
+        std::lock_guard lock(write_mutex_);
+        event->DelWriteEvent(id, fd);
+      }
       return NE_OK;
     }
   }
@@ -37,19 +40,27 @@ int StreamSocket::OnWritable(uint64_t id, int fd, BaseEvent *event) {
     // determine if there is still data in the queue
     if (writeQueue_.Empty()) {
       writeReady_.store(false);
-      event->DelWriteEvent(id, fd);
+      {
+        std::lock_guard lock(write_mutex_);
+        event->DelWriteEvent(id, fd);
+      }
       return NE_OK;
     }
   }
   return NE_WAIT;  // there is still data in the queue, waiting for the next write event
 }
 
-bool StreamSocket::SendPacket(std::string &&msg) {
+void StreamSocket::SendPacket(std::string &&msg, std::function<void()> addWriteFlag) {
   bool sendOver;
   do {
     sendOver = writeQueue_.Push(msg);
   } while (!sendOver);
-  return writeReady_.exchange(true);
+   if (!writeReady_.exchange(true)) {
+     std::lock_guard lock(write_mutex_);
+     if (addWriteFlag) {
+       addWriteFlag();
+     }
+   }
 }
 
 // Read data from the socket

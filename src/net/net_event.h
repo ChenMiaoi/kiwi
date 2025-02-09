@@ -49,7 +49,7 @@ class NetEvent {
   virtual void OnError() = 0;
 
   // Send data
-  virtual bool SendPacket(std::string &&msg) = 0;
+  virtual void SendPacket(std::string &&msg, std::function<void()> addWriteFlag) = 0;
 
   virtual void Close() = 0;
 

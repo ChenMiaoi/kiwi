@@ -42,7 +42,7 @@ int ListenSocket::OnReadable(const std::shared_ptr<Connection> &conn, std::strin
 
 int ListenSocket::OnWritable(uint64_t id, int fd, BaseEvent *event) { return 1; }
 
-bool ListenSocket::SendPacket(std::string &&msg) { return false; }
+void ListenSocket::SendPacket(std::string &&msg, std::function<void()> addWriteFlag) {}
 
 int ListenSocket::Init() {
   if (!Open()) {

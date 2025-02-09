@@ -29,7 +29,7 @@ class StreamSocket : public BaseSocket {
 
   int OnWritable(uint64_t id, int fd, BaseEvent *event) override;
 
-  bool SendPacket(std::string &&msg) override;
+  void SendPacket(std::string &&msg, std::function<void()> addWriteFlag) override;
 
   int Read(std::string *readBuff);
 
@@ -43,6 +43,7 @@ class StreamSocket : public BaseSocket {
   size_t sendPos_ = 0;  // send data buff pos
 
   std::atomic<bool> writeReady_ = false;  // write ready flag
+  std::mutex write_mutex_;                // write mutex
 };
 
 }  // namespace net
