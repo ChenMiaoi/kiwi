@@ -973,7 +973,7 @@ Status Redis::RPushx(const Slice& key, const std::vector<std::string>& values, u
 }
 
 Status Redis::ListsRename(const Slice& key, Redis* new_inst, const Slice& newkey) {
-  auto batch = Batch::CreateBatch(this); 
+  auto batch = Batch::CreateBatch(this);
   std::string meta_value;
   uint32_t statistic = 0;
   const std::vector<std::string> keys = {key.ToString(), newkey.ToString()};
@@ -996,7 +996,7 @@ Status Redis::ListsRename(const Slice& key, Redis* new_inst, const Slice& newkey
   ParsedListsMetaValue parsed_lists_meta_value(&meta_value);
   statistic = parsed_lists_meta_value.Count();
 
- // todo if value is too many, will slow to rename
+  // todo if value is too many, will slow to rename
   uint32_t version = parsed_lists_meta_value.Version();
   uint64_t index = parsed_lists_meta_value.LeftIndex() + 1;
   uint64_t right_index = parsed_lists_meta_value.RightIndex() - 1;
@@ -1004,7 +1004,8 @@ Status Redis::ListsRename(const Slice& key, Redis* new_inst, const Slice& newkey
   std::vector<std::string> list_nodes;
   rocksdb::Iterator* iter = db_->NewIterator(default_read_options_, handles_[kListsDataCF]);
   uint64_t current_index = index;
-  for(iter->Seek(base_lists_data_key.Encode()); iter->Valid() && current_index <= right_index; iter->Next(), current_index++) {
+  for (iter->Seek(base_lists_data_key.Encode()); iter->Valid() && current_index <= right_index;
+       iter->Next(), current_index++) {
     ParsedBaseDataValue parsed_value(iter->value());
     list_nodes.push_back(parsed_value.UserValue().ToString());
   }
@@ -1031,7 +1032,7 @@ Status Redis::ListsRename(const Slice& key, Redis* new_inst, const Slice& newkey
 }
 
 Status Redis::ListsRenamenx(const Slice& key, Redis* new_inst, const Slice& newkey) {
-  auto batch = Batch::CreateBatch(this); 
+  auto batch = Batch::CreateBatch(this);
 
   std::string meta_value;
   uint32_t statistic = 0;
@@ -1073,7 +1074,8 @@ Status Redis::ListsRenamenx(const Slice& key, Redis* new_inst, const Slice& newk
   std::vector<std::string> list_nodes;
   rocksdb::Iterator* iter = db_->NewIterator(default_read_options_, handles_[kListsDataCF]);
   uint64_t current_index = index;
-  for(iter->Seek(base_lists_data_key.Encode()); iter->Valid() && current_index <= right_index; iter->Next(), current_index++) {
+  for (iter->Seek(base_lists_data_key.Encode()); iter->Valid() && current_index <= right_index;
+       iter->Next(), current_index++) {
     ParsedBaseDataValue parsed_value(iter->value());
     list_nodes.push_back(parsed_value.UserValue().ToString());
   }
