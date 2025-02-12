@@ -200,7 +200,7 @@ void KqueueEvent::DoWrite(const struct kevent &event, const std::shared_ptr<Conn
 #  else
   auto _conn_id = reinterpret_cast<uint64_t *>(event.udata);
   uint64_t conn_id = *_conn_id;
-  delete event.udata;
+  delete _conn_id;
 #  endif
   auto ret = conn->net_event_->OnWritable(conn_id, conn->fd_, this);
   if (ret == NE_ERROR) {
@@ -215,7 +215,7 @@ void KqueueEvent::DoError(const struct kevent &event, std::string &&err) {
 #  else
   auto _connId = reinterpret_cast<uint64_t *>(event.udata);
   uint64_t connId = *_connId;
-  delete event.udata;
+  delete _connId;
 #  endif
   onClose_(connId, std::move(err));
 }
