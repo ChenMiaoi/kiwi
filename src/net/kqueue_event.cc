@@ -5,8 +5,8 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#include "config.h"
 #include "kqueue_event.h"
+#include "config.h"
 
 #ifdef HAVE_KQUEUE
 #  include "log.h"
