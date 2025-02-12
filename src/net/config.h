@@ -24,6 +24,7 @@ namespace net {
 #if defined(__x86_64__) || defined(_M_X64) || defined(__ppc64__) || defined(__aarch64__) || defined(__64BIT__) || \
     defined(_LP64) || defined(__LP64__) || defined(__arm64__)
 #  define HAVE_64BIT 1
+#  pragma message("Compiling for 64-bit system")
 #else
 #  define HAVE_32BIT 1
 #endif
