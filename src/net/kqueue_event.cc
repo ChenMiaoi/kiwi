@@ -6,7 +6,6 @@
  */
 
 #include "kqueue_event.h"
-#include "config.h"
 
 #ifdef HAVE_KQUEUE
 #  include "log.h"
