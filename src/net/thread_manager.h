@@ -266,12 +266,13 @@ void ThreadManager<T>::SendPacket(const T &conn, std::string &&msg) {
     conn_ptr = iter->second.second;
   }
 
-  conn_ptr->net_event_->SendPacket(std::move(msg));
-  if (net_options_.GetRwSeparation()) {
-    write_thread_->SetWriteEvent(conn_id, conn_ptr->fd_);
-  } else {
-    read_thread_->SetWriteEvent(conn_id, conn_ptr->fd_);
-  }
+  conn_ptr->net_event_->SendPacket(std::move(msg), [&]() {
+    if (net_options_.GetRwSeparation()) {
+      write_thread_->SetWriteEvent(conn_id, conn_ptr->fd_);
+    } else {
+      read_thread_->SetWriteEvent(conn_id, conn_ptr->fd_);
+    }
+  });
 }
 
 template <typename T>
