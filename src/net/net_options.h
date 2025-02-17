@@ -27,11 +27,11 @@ class NetOptions {
   uint32_t GetOpTcpKeepAlive() const { return tcpKeepAlive_; }
 
  private:
-  bool rw_separation_  = true;  // Whether to separate read and write
+  bool rw_separation_ = true;  // Whether to separate read and write
 
   int8_t thread_num_ = 1;  // The number of threads
 
-  uint32_t tcp_keepalive_timeout_  = 300;  // The timeout of the keepalive connection in seconds
+  uint32_t tcp_keepalive_timeout_ = 300;  // The timeout of the keepalive connection in seconds
 };
 
 }  // namespace net
