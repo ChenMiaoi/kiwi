@@ -14,24 +14,24 @@ class NetOptions {
   NetOptions() = default;
   ~NetOptions() = default;
 
-  void SetThreadNum(int8_t threadNum) { threadNum_ = threadNum; }
+  void SetThreadNum(int8_t number) { thread_num_ = number; }
 
-  int8_t GetThreadNum() const { return threadNum_; }
+  int8_t GetThreadNum() const { return thread_num_; }
 
-  void SetRwSeparation(bool rwSeparation = true) { rwSeparation_ = rwSeparation; }
+  void SetRwSeparation(bool spearation = true) { rw_separation_ = spearation; }
 
-  bool GetRwSeparation() const { return rwSeparation_; }
+  bool GetRwSeparation() const { return rw_separation_; }
 
-  void SetOpTcpKeepAlive(uint32_t tcpKeepAlive) { tcpKeepAlive_ = tcpKeepAlive; }
+  void SetOpTcpKeepAlive(uint32_t timeout) { tcp_keepalive_timeout_ = timeout; }
 
-  uint32_t GetOpTcpKeepAlive() const { return tcpKeepAlive_; }
+  uint32_t GetOpTcpKeepAlive() const { return tcp_keepalive_timeout_; }
 
  private:
-  bool rwSeparation_ = true;  // Whether to separate read and write
+  bool rw_separation_ = true;  // Whether to separate read and write
 
-  int8_t threadNum_ = 1;  // The number of threads
+  int8_t thread_num_ = 1;  // The number of threads
 
-  uint32_t tcpKeepAlive_ = 300;  // The timeout of the keepalive connection in seconds
+  uint32_t tcp_keepalive_timeout_ = 300;  // The timeout of the keepalive connection in seconds
 };
 
 }  // namespace net
