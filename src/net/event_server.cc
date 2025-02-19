@@ -11,6 +11,6 @@ namespace net {
 
 std::atomic<uint64_t> g_connId = 0;
 
-uint64_t getConnId() { return ++g_connId; }
+uint64_t getConnId() { return g_connId.fetch_add(1); }
 
 }  // namespace net
