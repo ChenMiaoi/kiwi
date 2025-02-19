@@ -39,15 +39,15 @@ bool KqueueEvent::Init() {
 }
 
 void KqueueEvent::AddEvent(int fd, int mask) const {
-  kevent change{};
+  struct kevent change;
   EV_SET(&change, fd, mask, EV_ADD, 0, 0, nullptr);
   if (kevent(EvFd(), &change, 1, nullptr, 0, nullptr) == -1) {
     ERROR("KqueueEvent AddEvent EvFd:{},fd:{}, epoll add error errno:{}", fd, EvFd(), fd, errno);
   }
 }
 
-void KqueueEvent::void AddEvent(Connection *conn, int mask) {
-  kevent change{};
+void KqueueEvent::AddEvent(Connection *conn, int mask) {
+  struct kevent change;
   EV_SET(&change, conn->fd_, mask, EV_ADD, 0, 0, conn);
   if (kevent(EvFd(), &change, 1, nullptr, 0, nullptr) == -1) {
     ERROR("KqueueEvent AddEvent id:{},EvFd:{}，fd:{}, kevent error:{}", conn->conn_id_, EvFd(), conn->fd_, errno);
@@ -56,14 +56,14 @@ void KqueueEvent::void AddEvent(Connection *conn, int mask) {
 
 void KqueueEvent::DelEvent(int fd) {
   if (mode_ & EVENT_MODE_READ) {
-    kevent change{};
+    struct kevent change;
     EV_SET(&change, fd, EVENT_READ, EV_DELETE, 0, 0, nullptr);
     if (kevent(EvFd(), &change, 1, nullptr, 0, nullptr) == -1) {
       ERROR("KqueueEvent Del read Event EvFd:{}，fd:{}, kevent error:{}", EvFd(), fd, errno);
     }
   }
   if (mode_ & EVENT_MODE_WRITE) {
-    kevent change{};
+    struct kevent change;
     EV_SET(&change, fd, EVENT_WRITE, EV_DELETE, 0, 0, nullptr);
     if (kevent(EvFd(), &change, 1, nullptr, 0, nullptr) == -1) {
       if (errno != ENOENT) {  // If the event does not exist, it will return ENOENT
@@ -76,7 +76,7 @@ void KqueueEvent::DelEvent(int fd) {
 void KqueueEvent::AddWriteEvent(Connection *conn) { AddEvent(conn, EVENT_WRITE); }
 
 void KqueueEvent::DelWriteEvent(Connection *conn) {
-  kevent change{};
+  struct kevent change;
   EV_SET(&change, conn->fd_, EVENT_WRITE, EV_DELETE, 0, 0, nullptr);
   if (kevent(EvFd(), &change, 1, nullptr, 0, nullptr) == -1) {
     ERROR("KqueueEvent Del write Event id:{},EvFd:{}，fd:{}, kevent error:{}", conn->conn_id_, EvFd(), conn->fd_,
@@ -116,7 +116,7 @@ void KqueueEvent::EventRead() {
         if (!listen) {
           conn = static_cast<Connection *>(events[i].udata);
         }
-        DoRead(events[i], conn);
+        DoRead(events[i], conn, listen);
       } else if ((mode_ & EVENT_MODE_WRITE) && events[i].filter == EVENT_WRITE) {
         conn = static_cast<Connection *>(events[i].udata);
         if (!conn) {
@@ -133,7 +133,7 @@ void KqueueEvent::EventRead() {
 }
 
 void KqueueEvent::EventWrite() {
-  kevent events[eventsSize];
+  struct kevent events[eventsSize];
   while (running_.load()) {
     int nev = kevent(EvFd(), nullptr, 0, events, eventsSize, nullptr);
     for (int i = 0; i < nev; ++i) {
@@ -153,7 +153,7 @@ void KqueueEvent::EventWrite() {
   }
 }
 
-void KqueueEvent::DoRead(const kevent &event, Connection *conn, const std::shared_ptr<ListenSocket> &listen) {
+void KqueueEvent::DoRead(const struct kevent &event, Connection *conn, const std::shared_ptr<ListenSocket> &listen) {
   if (listen) {
     auto newConn = std::make_shared<Connection>(nullptr);
     auto connFd = listen->OnReadable(newConn.get(), nullptr);
@@ -181,7 +181,7 @@ void KqueueEvent::DoRead(const kevent &event, Connection *conn, const std::share
   }
 }
 
-void KqueueEvent::DoWrite(const kevent &event, Connection *conn) {
+void KqueueEvent::DoWrite(const struct kevent &event, Connection *conn) {
   auto ret = conn->net_event_->OnWritable(conn, this);
   if (ret == NE_ERROR) {
     DoError(event, "DoWrite error,errno: " + std::to_string(errno));
@@ -189,7 +189,7 @@ void KqueueEvent::DoWrite(const kevent &event, Connection *conn) {
   }
 }
 
-void KqueueEvent::DoError(const kevent &event, std::string &&err) {
+void KqueueEvent::DoError(const struct kevent &event, std::string &&err) {
   auto conn = static_cast<Connection *>(event.udata);
   if (!conn) {
     ERROR("DoError conn is null");

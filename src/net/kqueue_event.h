@@ -46,11 +46,11 @@ class KqueueEvent : public BaseEvent {
 
   void EventWrite();
 
-  void DoRead(const kevent &event, Connection *conn, const std::shared_ptr<ListenSocket> &listen);
+  void DoRead(const struct kevent &event, Connection *conn, const std::shared_ptr<ListenSocket> &listen);
 
-  void DoWrite(const kevent &event, Connection *conn);
+  void DoWrite(const struct kevent &event, Connection *conn);
 
-  void DoError(const kevent &event, std::string &&err);
+  void DoError(const struct kevent &event, std::string &&err);
 
  private:
   const int eventsSize = 1024;
