@@ -111,6 +111,9 @@ void EpollEvent::EventRead() {
         DoError(events[i], "");
         continue;
       }
+      if (events[i].data.fd == pipeFd_[0]) {
+        continue;
+      }
       Connection *conn = nullptr;
       if (events[i].events & EVENT_READ) {
         // If the event is less than the listen socket, it is a new connection

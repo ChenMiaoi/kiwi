@@ -110,6 +110,9 @@ void KqueueEvent::EventRead() {
         DoError(events[i], "");
         continue;
       }
+      if (events[i].data.fd == pipeFd_[0]) {
+        continue;
+      }
       Connection *conn = nullptr;
       if (events[i].filter == EVENT_READ) {
         auto listen = getListenSocket(events[i].ident);
