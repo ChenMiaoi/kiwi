@@ -46,6 +46,7 @@ struct SocketAddr {
     if (::inet_pton(AF_INET6, ip.c_str(), &addr_.addr6_.sin6_addr) == 1) {
       addr_.addr6_.sin6_family = AF_INET6;
       addr_.addr6_.sin6_port = htons(hostPort);
+      addr_.addr6_.sin6_scope_id = 0;
       return;
     }
     Clear();  // Reset the address if parsing fails
