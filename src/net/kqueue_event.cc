@@ -110,7 +110,7 @@ void KqueueEvent::EventRead() {
         DoError(events[i], "");
         continue;
       }
-      if (events[i].data.fd == pipeFd_[0]) {
+      if (events[i].ident == pipeFd_[0]) {
         continue;
       }
       Connection *conn = nullptr;
