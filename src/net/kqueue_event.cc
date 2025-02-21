@@ -42,7 +42,7 @@ void KqueueEvent::AddEvent(int fd, int mask) const {
   struct kevent change;
   EV_SET(&change, fd, mask, EV_ADD, 0, 0, nullptr);
   if (kevent(EvFd(), &change, 1, nullptr, 0, nullptr) == -1) {
-    ERROR("KqueueEvent AddEvent EvFd:{},fd:{}, epoll add error errno:{}", fd, EvFd(), fd, errno);
+    ERROR("KqueueEvent AddEvent EvFd:{},fd:{}, epoll add error errno:{}", EvFd(), fd, errno);
   }
 }
 

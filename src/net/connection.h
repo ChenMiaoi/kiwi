@@ -18,7 +18,8 @@ class NetEvent;
 // Auxiliary structure
 struct Connection {
   explicit Connection(std::unique_ptr<NetEvent> net_event) : net_event_(std::move(net_event)) {}
-
+  Connection(const Connection&) = delete;
+  Connection& operator=(const Connection&) = delete;
   ~Connection() = default;
 
   std::unique_ptr<NetEvent> net_event_;
