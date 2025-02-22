@@ -8,7 +8,6 @@
 #pragma once
 
 #include <arpa/inet.h>
-#include <atomic>
 #include <cstring>
 #include <memory>
 
@@ -27,15 +26,17 @@ class ListenSocket : public BaseSocket {
 
   void SetListenAddr(const SocketAddr &addr) { addr_ = addr; }
 
+  SocketAddr GetListenAddr() const { return addr_; }
+
   // Accept new connection and create new connection object
   // when the connection is established, the OnCreate function is called
-  int OnReadable(const std::shared_ptr<Connection> &conn, std::string *readBuff) override;
+  int OnReadable(const std::shared_ptr<Connection> &conn, std::string *read_buff) override;
 
   // The function is cant be used
-  int OnWritable() override;
+  int OnWritable(uint64_t id, int fd, BaseEvent *event) override;
 
   // The function is cant be used
-  bool SendPacket(std::string &&msg) override;
+  void SendPacket(std::string &&msg, std::function<void()> addWriteFlag) override;
 
   // Initialize the socket and bind the address
   int Init() override;

@@ -256,13 +256,18 @@ bool KiwiDB::Init() {
     PREPL.SetMasterAddr(g_config.master_ip.c_str(), g_config.master_port);
   }
 
+  auto tcpKeepAlive = g_config.tcp_keepalive;
+  options_.SetOpTcpKeepAlive(tcpKeepAlive);
+
   options_.SetRwSeparation(true);
 
   event_server_ = std::make_unique<net::EventServer<std::shared_ptr<PClient>>>(options_);
 
-  net::SocketAddr addr(g_config.ip, g_config.port);
-  INFO("Add listen addr:{}, port:{}", g_config.ip, g_config.port);
-  event_server_->AddListenAddr(addr);
+  for (const auto& ip : g_config.ips) {
+    net::SocketAddr addr(ip, g_config.port);
+    INFO("Add listen addr: {}, port: {}", ip, g_config.port);
+    event_server_->AddListenAddr(addr);
+  }
 
   event_server_->SetOnInit([](std::shared_ptr<PClient>* client) { *client = std::make_shared<PClient>(); });
 

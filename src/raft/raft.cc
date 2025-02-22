@@ -126,10 +126,11 @@ butil::Status Raft::Init(std::string& group_id, bool initial_conf_is_null) {
   assert(group_id.size() == RAFT_GROUPID_LEN);
   this->group_id_ = group_id;
 
-  // FIXME: g_config.ip is default to 127.0.0.0, which may not work in cluster.
-  raw_addr_ = g_config.ip + ":" + std::to_string(port);
+  // NOTE: Default raft_ip is 127.0.0.1. For cluster setup, configure the appropriate
+  // IP address in kiwi.conf using the 'raft-ip' directive.
+  raw_addr_ = g_config.raft_ip + ":" + std::to_string(port);
   butil::ip_t ip;
-  auto ret = butil::str2ip(g_config.ip.c_str(), &ip);
+  auto ret = butil::str2ip(g_config.raft_ip.c_str(), &ip);
   if (ret != 0) {
     server_.reset();
     return ERROR_LOG_AND_STATUS("Failed to convert str_ip to butil::ip_t");
@@ -290,6 +291,16 @@ storage::LogIndex Raft::GetLastLogIndex(bool is_flush) {
   return node_->get_last_log_index(is_flush);
 }
 
+void Raft::GetConfigurationByIndex(const int64_t index, braft::ConfigurationEntry* conf,
+                                   braft::ConfigurationEntry* learner_conf) {
+  if (!node_) {
+    ERROR("Node is not initialized");
+    return;
+  }
+
+  node_->get_configuration(index, conf, learner_conf);
+}
+
 void Raft::SendNodeRequest(PClient* client) {
   assert(client);
 
@@ -324,7 +335,7 @@ void Raft::SendNodeAddRequest(PClient* client) {
   // Node id in braft are ip:port, the node id param in RAFT.NODE ADD cmd will be ignored.
   int unused_node_id = 0;
   auto port = g_config.port + kiwi::g_config.raft_port_offset;
-  auto raw_addr = g_config.ip + ":" + std::to_string(port);
+  auto raw_addr = g_config.raft_ip + ":" + std::to_string(port);
 
   client->AppendArrayLen(int64_t(4));
   client->AppendString("RAFT.NODE");

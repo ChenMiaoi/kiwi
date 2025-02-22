@@ -14,7 +14,13 @@
 
 namespace net {
 
-int BaseSocket::CreateTCPSocket() { return ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); }
+int BaseSocket::CreateTCPSocket(const SocketAddr &addr) {
+  if (addr.IsIPV6()) {
+    return ::socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+  }
+
+  return ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+}
 
 int BaseSocket::CreateUDPSocket() { return ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); }
 
@@ -31,6 +37,7 @@ void BaseSocket::OnCreate() {
   SetNonBlock(true);
 #endif
   SetNodelay();
+  SetTcpKeepAlive();
   SetSndBuf();
   SetRcvBuf();
 }
@@ -57,6 +64,49 @@ void BaseSocket::SetNodelay() {
   if (::setsockopt(Fd(), IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char *>(&nodelay), sizeof(int)) == -1) {
     WARN("SetNodelay fd:{} error:{}", Fd(), errno);
   }
+}
+
+void BaseSocket::SetTcpKeepAlive() {
+  if (tcp_keep_alive_ == 0) {
+    return;
+  }
+
+  int enabled = 1;
+  uint32_t idle = tcp_keep_alive_;
+  uint32_t intvl = idle / 3;
+  int cnt = 3;
+
+  if (setsockopt(Fd(), SOL_SOCKET, SO_KEEPALIVE, &enabled, sizeof(enabled)) == -1) {
+    WARN("SetTcpKeepAlive fd:{} error:{}", Fd(), errno);
+    return;
+  }
+
+#ifdef TCP_KEEPIDLE
+  if (setsockopt(Fd(), IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle))) {
+    WARN("SetTcpKeepAlive fd:{} error:{}", Fd(), errno);
+    return;
+  }
+#elif defined(TCP_KEEPALIVE)
+  /* support MacOS */
+  if (setsockopt(Fd(), IPPROTO_TCP, TCP_KEEPALIVE, &idle, sizeof(idle))) {
+    WARN("SetTcpKeepAlive fd:{} error:{}", Fd(), errno);
+    return;
+  }
+#endif
+
+#ifdef TCP_KEEPINTVL
+  if (setsockopt(Fd(), IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl))) {
+    WARN("SetTcpKeepAlive fd:{} error:{}", Fd(), errno);
+    return;
+  }
+#endif
+
+#ifdef TCP_KEEPCNT
+  if (setsockopt(Fd(), IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt))) {
+    WARN("SetTcpKeepAlive fd:{} error:{}", Fd(), errno);
+    return;
+  }
+#endif
 }
 
 void BaseSocket::SetSndBuf(socklen_t winsize) {
