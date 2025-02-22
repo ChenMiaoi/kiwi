@@ -358,6 +358,9 @@ uint64_t ThreadManager<T>::DoTCPConnect(T &t, int fd, const std::shared_ptr<Conn
   }
 
   read_thread_->AddNewEvent(conn_id, fd, BaseEvent::EVENT_READ);
+  if (write_thread_) {
+    write_thread_->AddNewEvent(conn_id, fd, BaseEvent::EVENT_NULL);  // add null event to write_thread epoll
+  }
   return conn_id;
 }
 
