@@ -350,11 +350,11 @@ struct BlockKey {  // this data struct is made for the scenario of multi dbs in 
 
   int db_id_ = -1;
   std::string key_;
-  bool operator==(const BlockKey& p) const { return p.db_id == db_id && p.key == key; }
+  bool operator==(const BlockKey& p) const { return p.db_id_ == db_id_ && p.key_ == key_; }
 };
 struct BlockKeyHash {
   std::size_t operator()(const BlockKey& k) const {
-    return std::hash<int>{}(k.db_id) ^ std::hash<std::string>{}(k.key);
+    return std::hash<int>{}(k.db_id_) ^ std::hash<std::string>{}(k.key_);
   }
 };
 
