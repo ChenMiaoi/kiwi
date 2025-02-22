@@ -346,10 +346,10 @@ class BaseCmdGroup : public BaseCmd {
 };
 
 struct BlockKey {  // this data struct is made for the scenario of multi dbs in kiwi.
-  BlockKey(int client_db_id,const std::string&client_key):db_id(client_db_id),key(client_key){}
+  BlockKey(int db_id,const std::string&key):db_id_(db_id),key_(key){}
 
-  int db_id = -1;
-  std::string key;
+  int db_id_ = -1;
+  std::string key_;
   bool operator==(const BlockKey& p) const { return p.db_id == db_id && p.key == key; }
 };
 struct BlockKeyHash {
