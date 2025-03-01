@@ -1,10 +1,10 @@
-//  Copyright (c) 2017-present, Arana/Kiwi Community.  All rights reserved.
+//  Copyright (c) 2017-present, arana-db Community.  All rights reserved.
 //  This source code is licensed under the BSD-style license found in the
 //  LICENSE file in the root directory of this source tree. An additional grant
 //  of patent rights can be found in the PATENTS file in the same directory.
 
 #include <gtest/gtest.h>
-#include <iostream>
+#include <rocksdb/status.h>
 #include <thread>
 
 #include "src/base_filter.h"
@@ -18,7 +18,7 @@ using namespace storage;
 class LogIniter {
  public:
   LogIniter() {
-    logger::Init("./string_test.log");
+    logger::Init("./hashes_filter_test.log");
     spdlog::set_level(spdlog::level::info);
   }
 };
@@ -28,7 +28,7 @@ LogIniter log_initer;
 // Filter
 TEST(HashesFilterTest, FilterTest) {
   rocksdb::DB* meta_db;
-  std::string db_path = "./db/hash_filter";
+  std::string db_path = "./hash_filter_db";
   std::vector<rocksdb::ColumnFamilyHandle*> handles;
 
   storage::Options options;
