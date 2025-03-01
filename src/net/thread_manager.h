@@ -162,7 +162,7 @@ requires HasSetFdFunction<T>
 void ThreadManager<T>::OnNetEventCreate(int fd, const std::shared_ptr<Connection> &conn) {
   uint32_t expected = get_client_count();
   if (!client_count_.compare_exchange_strong(expected, expected + 1, std::memory_order_seq_cst,
-                                            std::memory_order_seq_cst) ||
+                                             std::memory_order_seq_cst) ||
       expected >= net_options_.GetMaxClients()) {
     INFO("Max client connections, refuse new connection fd:{}", fd);
     std::string response = "-ERR max clients reached\r\n";

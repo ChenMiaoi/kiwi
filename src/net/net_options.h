@@ -27,13 +27,12 @@ class NetOptions {
   uint32_t GetMaxClients() const { return maxClients_; }
   void SetOpTcpKeepAlive(uint32_t tcpKeepAlive) { tcpKeepAlive_ = tcpKeepAlive; }
 
-  uint32_t GetOpTcpKeepAlive() const { return tcp_keepalive_timeout_; }
+  uint32_t GetOpTcpKeepAlive() const { return tcpKeepAlive_; }
 
  private:
   bool rw_separation_ = true;  // Whether to separate read and write
 
-  int8_t thread_num_ = 1;  // The number of threads
-
+  int8_t thread_num_ = 1;        // The number of threads
   uint32_t maxClients_ = 1;      // The maximum number of connections(default 40000)
   uint32_t tcpKeepAlive_ = 300;  // The timeout of the keepalive connection in seconds
 };
