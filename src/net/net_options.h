@@ -22,7 +22,10 @@ class NetOptions {
 
   bool GetRwSeparation() const { return rw_separation_; }
 
-  void SetOpTcpKeepAlive(uint32_t timeout) { tcp_keepalive_timeout_ = timeout; }
+  void SetMaxClients(uint32_t maxClients) { maxClients_ = maxClients; }
+
+  uint32_t GetMaxClients() const { return maxClients_; }
+  void SetOpTcpKeepAlive(uint32_t tcpKeepAlive) { tcpKeepAlive_ = tcpKeepAlive; }
 
   uint32_t GetOpTcpKeepAlive() const { return tcp_keepalive_timeout_; }
 
@@ -31,7 +34,8 @@ class NetOptions {
 
   int8_t thread_num_ = 1;  // The number of threads
 
-  uint32_t tcp_keepalive_timeout_ = 300;  // The timeout of the keepalive connection in seconds
+  uint32_t maxClients_ = 1;      // The maximum number of connections(default 40000)
+  uint32_t tcpKeepAlive_ = 300;  // The timeout of the keepalive connection in seconds
 };
 
 }  // namespace net
