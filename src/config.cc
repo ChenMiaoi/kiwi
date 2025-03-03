@@ -133,7 +133,7 @@ Status MemorySize::SetValue(const std::string& value) {
 Config::Config() {
   AddBool("redis-compatible-mode", &CheckYesNo, true, &redis_compatible_mode);
   AddBool("daemonize", &CheckYesNo, false, &daemonize);
-  AddStringArray("ips", true, &ips);
+  AddStringArray("ips", false, &ips);
   AddString("raft-ip", false, &raft_ip);
   AddNumberWithLimit<uint16_t>("port", false, &port, PORT_LIMIT_MIN, PORT_LIMIT_MAX);
   AddNumber("raft-port-offset", true, &raft_port_offset);
