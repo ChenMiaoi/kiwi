@@ -78,16 +78,16 @@ class StringValue : public BaseValue {
 class StringValueArray : public BaseValue {
  public:
   StringValueArray(const std::string& key, CheckFunc check_func_ptr, bool rewritable,
-                   std::vector<std::string>& value_ptr_vec, char delimiter = ' ')
+                   std::vector<std::string>* value_ptr_vec, char delimiter = ' ')
       : BaseValue(key, std::move(check_func_ptr), rewritable), values_(value_ptr_vec), delimiter_(delimiter) {}
   ~StringValueArray() override = default;
 
-  std::string Value() const override { return kstd::StringConcat(values_, delimiter_); };
+  std::string Value() const override { return kstd::StringConcat(*values_, delimiter_); };
 
  private:
   Status SetValue(const std::string& value) override;
 
-  std::vector<std::string> values_;
+  std::vector<std::string>* values_;
   char delimiter_ = 0;
 };
 
@@ -420,7 +420,7 @@ class Config {
    * when a key-value pair is duplicated.
    * support read string array from config file,default delimiter is ' '
    */
-  void AddStringArray(const std::string& key, bool rewritable, std::vector<std::string> values_ptr_vector) {
+  void AddStringArray(const std::string& key, bool rewritable, std::vector<std::string>* values_ptr_vector) {
     config_map_.emplace(key, std::make_unique<StringValueArray>(key, nullptr, rewritable, values_ptr_vector));
   }
 
