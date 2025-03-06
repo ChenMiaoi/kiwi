@@ -1078,9 +1078,8 @@ Status Redis::ZGetAll(const Slice& key, double weight, std::map<std::string, dou
       int32_t cur_index = 0;
       ParsedZSetsMetaValue parsed_zsets_meta_value(&meta_value);
       int32_t stop_index = parsed_zsets_meta_value.Count() - 1;
-      double score = 0.0;
       uint64_t version = parsed_zsets_meta_value.Version();
-      ZSetsScoreKey zsets_score_key(key.ToString(), version, std::numeric_limits<double>::lowest(), Slice());
+      ZSetsScoreKey zsets_score_key(key, version, std::numeric_limits<double>::lowest(), Slice());
       Slice seek_key = zsets_score_key.Encode();
       rocksdb::Iterator* iter = db_->NewIterator(read_options, handles_[kZsetsScoreCF]);
       for (iter->Seek(seek_key); iter->Valid() && cur_index <= stop_index; iter->Next(), ++cur_index) {
