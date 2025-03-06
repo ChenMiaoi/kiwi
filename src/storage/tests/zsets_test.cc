@@ -251,8 +251,7 @@ TEST_F(ZSetsTest, ZPopMaxTest) {
   ASSERT_TRUE(score_members_match(
       score_members, {{2e5 + 3.98, "MM9"}, {2e5 + 3.98, "MM10"}, {1, "MM2"}, {1, "MM1"}, {0.532445, "MM8"}}));
   ASSERT_TRUE(score_members_match(&db, "GP3_ZPOPMAX_KEY",
-                                  {{-1, "MM3"}, {-1, "MM4"}, {1 / 6.0, "MM5"}, {1 / 6.0, "MM6"}, {0.532445,
-                                  "MM7"}}));
+                                  {{-1, "MM3"}, {-1, "MM4"}, {1 / 6.0, "MM5"}, {1 / 6.0, "MM6"}, {0.532445, "MM7"}}));
 
   // ***************** Group 4 Test *****************
   //
@@ -399,11 +398,9 @@ TEST_F(ZSetsTest, ZPopMinTest) {
   ASSERT_EQ(5, score_members.size());
   ASSERT_TRUE(size_match(&db, "GP3_ZPOPMIN_KEY", 5));
   ASSERT_TRUE(score_members_match(
-      &db, "GP3_ZPOPMIN_KEY", {{0.532445, "MM8"}, {1, "MM1"}, {1, "MM2"}, {2e5 + 3.98, "MM10"}, {2e5 + 3.98,
-      "MM9"}}));
+      &db, "GP3_ZPOPMIN_KEY", {{0.532445, "MM8"}, {1, "MM1"}, {1, "MM2"}, {2e5 + 3.98, "MM10"}, {2e5 + 3.98, "MM9"}}));
   ASSERT_TRUE(score_members_match(score_members,
-                                  {{-1, "MM3"}, {-1, "MM4"}, {1 / 6.0, "MM5"}, {1 / 6.0, "MM6"}, {0.532445,
-                                  "MM7"}}));
+                                  {{-1, "MM3"}, {-1, "MM4"}, {1 / 6.0, "MM5"}, {1 / 6.0, "MM6"}, {0.532445, "MM7"}}));
 
   // ***************** Group 4 Test *****************
   //
