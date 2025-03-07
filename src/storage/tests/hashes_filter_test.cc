@@ -62,7 +62,8 @@ TEST(HashesFilterTest, FilterTest) {
   storage::EncodeFixed32(str, 0);
 
   // hash_count = 0 && etime < curtime && version < curtime
-  HashesMetaValue tmf_meta_value1(DataType::kHashes, std::string(str, sizeof(int32_t)));
+  auto key = std::string(str, sizeof(int32_t));
+  HashesMetaValue tmf_meta_value1(DataType::kHashes, key);
 
   tmf_meta_value1.UpdateVersion();
 
