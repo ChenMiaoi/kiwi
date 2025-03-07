@@ -77,7 +77,8 @@ TEST(HashesFilterTest, FilterTest) {
   // Timeout timestamp is not set, it's not an empty hash table.
   // hash_count = 1 && etime == 0 && version < curtime
   storage::EncodeFixed32(str, 1);
-  HashesMetaValue tmf_meta_value2(DataType::kHashes, std::string(str, sizeof(int32_t)));
+  key = std::string(str, sizeof(int32_t));
+  HashesMetaValue tmf_meta_value2(DataType::kHashes, key);
   tmf_meta_value2.UpdateVersion();
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   filter_result =
@@ -86,7 +87,8 @@ TEST(HashesFilterTest, FilterTest) {
 
   // Timeout timestamp is set, but not expired.
   storage::EncodeFixed32(str, 1);
-  HashesMetaValue tmf_meta_value3(DataType::kHashes, std::string(str, sizeof(int32_t)));
+  key = std::string(str, sizeof(int32_t));
+  HashesMetaValue tmf_meta_value3(DataType::kHashes, key);
   tmf_meta_value3.UpdateVersion();
   tmf_meta_value3.SetRelativeTimestamp(3);
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -96,7 +98,8 @@ TEST(HashesFilterTest, FilterTest) {
 
   // Timeout timestamp is set, already expired.
   storage::EncodeFixed32(str, 1);
-  HashesMetaValue tmf_meta_value4(DataType::kHashes, std::string(str, sizeof(int32_t)));
+  key = std::string(str, sizeof(int32_t));
+  HashesMetaValue tmf_meta_value4(DataType::kHashes, key);
   tmf_meta_value4.UpdateVersion();
   tmf_meta_value4.SetRelativeTimestamp(1);
   std::this_thread::sleep_for(std::chrono::milliseconds(2000));
@@ -111,7 +114,8 @@ TEST(HashesFilterTest, FilterTest) {
   HashesDataFilter* hashes_data_filter1 = new HashesDataFilter(meta_db, &handles, DataType::kHashes);
   ASSERT_TRUE(hashes_data_filter1 != nullptr);
   storage::EncodeFixed32(str, 1);
-  HashesMetaValue tdf_meta_value1(DataType::kHashes, std::string(str, sizeof(int32_t)));
+  key = std::string(str, sizeof(int32_t));
+  HashesMetaValue tdf_meta_value1(DataType::kHashes, key);
   version = tdf_meta_value1.UpdateVersion();
   s = meta_db->Put(rocksdb::WriteOptions(), handles[0], filter_test_key.Encode(), tdf_meta_value1.Encode());
   ASSERT_TRUE(s.ok());
@@ -127,7 +131,8 @@ TEST(HashesFilterTest, FilterTest) {
   HashesDataFilter* hashes_data_filter2 = new HashesDataFilter(meta_db, &handles, DataType::kHashes);
   ASSERT_TRUE(hashes_data_filter2 != nullptr);
   storage::EncodeFixed32(str, 1);
-  HashesMetaValue tdf_meta_value2(DataType::kHashes, std::string(str, sizeof(int32_t)));
+  key = std::string(str, sizeof(int32_t));
+  HashesMetaValue tdf_meta_value2(DataType::kHashes, key);
   version = tdf_meta_value2.UpdateVersion();
   tdf_meta_value2.SetRelativeTimestamp(1);
   s = meta_db->Put(rocksdb::WriteOptions(), handles[0], filter_test_key.Encode(), tdf_meta_value2.Encode());
@@ -144,7 +149,8 @@ TEST(HashesFilterTest, FilterTest) {
   HashesDataFilter* hashes_data_filter3 = new HashesDataFilter(meta_db, &handles, DataType::kHashes);
   ASSERT_TRUE(hashes_data_filter3 != nullptr);
   storage::EncodeFixed32(str, 1);
-  HashesMetaValue tdf_meta_value3(DataType::kHashes, std::string(str, sizeof(int32_t)));
+  key = std::string(str, sizeof(int32_t));
+  HashesMetaValue tdf_meta_value3(DataType::kHashes, key);
   version = tdf_meta_value3.UpdateVersion();
   tdf_meta_value3.SetRelativeTimestamp(1);
   s = meta_db->Put(rocksdb::WriteOptions(), handles[0], filter_test_key.Encode(), tdf_meta_value3.Encode());
@@ -162,7 +168,8 @@ TEST(HashesFilterTest, FilterTest) {
   HashesDataFilter* hashes_data_filter4 = new HashesDataFilter(meta_db, &handles, DataType::kHashes);
   ASSERT_TRUE(hashes_data_filter4 != nullptr);
   storage::EncodeFixed32(str, 1);
-  HashesMetaValue tdf_meta_value4(DataType::kHashes, std::string(str, sizeof(int32_t)));
+  key = std::string(str, sizeof(int32_t));
+  HashesMetaValue tdf_meta_value4(DataType::kHashes, key);
   version = tdf_meta_value4.UpdateVersion();
   s = meta_db->Put(rocksdb::WriteOptions(), handles[0], filter_test_key.Encode(), tdf_meta_value4.Encode());
   ASSERT_TRUE(s.ok());
@@ -181,7 +188,8 @@ TEST(HashesFilterTest, FilterTest) {
   HashesDataFilter* hashes_data_filter5 = new HashesDataFilter(meta_db, &handles, DataType::kHashes);
   ASSERT_TRUE(hashes_data_filter5 != nullptr);
   storage::EncodeFixed32(str, 1);
-  HashesMetaValue tdf_meta_value5(DataType::kHashes, std::string(str, sizeof(int32_t)));
+  key = std::string(str, sizeof(int32_t));
+  HashesMetaValue tdf_meta_value5(DataType::kHashes, key);
   version = tdf_meta_value5.UpdateVersion();
   s = meta_db->Put(rocksdb::WriteOptions(), handles[0], filter_test_key.Encode(), tdf_meta_value5.Encode());
   ASSERT_TRUE(s.ok());
