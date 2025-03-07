@@ -226,9 +226,10 @@ bool HelloCmd::DoInitial(PClient* client) {
 
 void HelloCmd::DoCmd(PClient* client) {
   size_t argc = client->argv_.size();
+  // skip command arg: hello 2, start from the third arg
   size_t next_arg = 2;
 
-  for (; next_arg < argc; next_arg++) {
+  while (next_arg < argc) {
     size_t more_args = argc - next_arg;
     const std::string& arg = client->argv_[next_arg];
     // TODO(marsevilspirit): support auth acl
@@ -236,20 +237,26 @@ void HelloCmd::DoCmd(PClient* client) {
     // now only support hello auth password
     // do not support username (need acl)
     if ((strcasecmp(arg.data(), "SETNAME") == 0) && more_args) {
-      client->SetName(client->argv_[next_arg + 1]);
-      next_arg++;
+      auto& name = client->argv_[next_arg + 1];
+      if (name.find(' ') != std::string::npos) {
+        client->SetRes(CmdRes::kErrOther, "invalid name: cannot contain spaces");
+        return;
+      }
+      client->SetName(name);
+      next_arg += 2;
     } else if (strcasecmp(arg.data(), "AUTH") == 0 && more_args) {
       authed_ = true;
       if (client->GetAuth()) {
         continue;
       }
-      if (client->argv_[next_arg + 1] != g_config.password) {
+      auto& input_password = client->argv_[next_arg + 1];
+      if (input_password != g_config.password) {
         client->SetRes(CmdRes::kErrOther, "invalid password");
         return;
       } else {
         client->SetAuth();
       }
-      next_arg++;
+      next_arg += 2;
     } else {
       client->SetRes(CmdRes::kSyntaxErr, "Syntax error");
       return;
