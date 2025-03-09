@@ -30,13 +30,15 @@ class KqueueEvent : public BaseEvent {
 
   bool Init() override;
 
-  void AddEvent(uint64_t id, int fd, int mask) override;
+  void AddEvent(int fd, int mask) const;
+
+  void AddEvent(Connection *conn, int mask) override;
 
   void DelEvent(int fd) override;
 
-  void AddWriteEvent(uint64_t id, int fd) override;
+  void AddWriteEvent(Connection *conn) override;
 
-  void DelWriteEvent(uint64_t id, int fd) override;
+  void DelWriteEvent(Connection *conn) override;
 
   void EventPoll() override;
 
@@ -44,9 +46,9 @@ class KqueueEvent : public BaseEvent {
 
   void EventWrite();
 
-  void DoRead(const struct kevent &event, const std::shared_ptr<Connection> &conn);
+  void DoRead(const struct kevent &event, Connection *conn, const std::shared_ptr<ListenSocket> &listen);
 
-  void DoWrite(const struct kevent &event, const std::shared_ptr<Connection> &conn);
+  void DoWrite(const struct kevent &event, Connection *conn);
 
   void DoError(const struct kevent &event, std::string &&err);
 

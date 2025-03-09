@@ -19,8 +19,8 @@ const int ListenSocket::LISTENQ = 1024;
 
 bool ListenSocket::REUSE_PORT = true;
 
-int ListenSocket::OnReadable(const std::shared_ptr<Connection> &conn, std::string *read_buff) {
-  struct sockaddr_in clientAddr {};
+int ListenSocket::OnReadable(Connection *conn, std::string *read_buff) {
+  sockaddr_in clientAddr{};
   auto newConnFd = Accept(&clientAddr);
   if (newConnFd == 0) {
     ERROR("ListenSocket fd:{},Accept error:{}", Fd(), errno);
@@ -40,7 +40,7 @@ int ListenSocket::OnReadable(const std::shared_ptr<Connection> &conn, std::strin
   return newConnFd;
 }
 
-int ListenSocket::OnWritable(uint64_t id, int fd, BaseEvent *event) { return 1; }
+int ListenSocket::OnWritable(Connection *conn, BaseEvent *event) { return 1; }
 
 void ListenSocket::SendPacket(std::string &&msg, std::function<void()> addWriteFlag) {}
 

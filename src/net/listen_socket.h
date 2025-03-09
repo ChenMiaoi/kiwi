@@ -30,10 +30,10 @@ class ListenSocket : public BaseSocket {
 
   // Accept new connection and create new connection object
   // when the connection is established, the OnCreate function is called
-  int OnReadable(const std::shared_ptr<Connection> &conn, std::string *read_buff) override;
+  int OnReadable(Connection *conn, std::string *readBuff) override;
 
   // The function is cant be used
-  int OnWritable(uint64_t id, int fd, BaseEvent *event) override;
+  int OnWritable(Connection *conn, BaseEvent *event) override;
 
   // The function is cant be used
   void SendPacket(std::string &&msg, std::function<void()> addWriteFlag) override;

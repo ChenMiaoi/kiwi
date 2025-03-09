@@ -11,16 +11,16 @@
 
 namespace net {
 
-int StreamSocket::OnReadable(const std::shared_ptr<Connection> &conn, std::string *readBuff) { return Read(readBuff); }
+int StreamSocket::OnReadable(Connection *conn, std::string *readBuff) { return Read(readBuff); }
 
 // return bytes that have not yet been sent
-int StreamSocket::OnWritable(uint64_t id, int fd, BaseEvent *event) {
+int StreamSocket::OnWritable(Connection *conn, BaseEvent *event) {
   if (sendData_.empty()) {
     if (!writeQueue_.Pop(sendData_)) {  // no data to send
       std::lock_guard lock(write_mutex_);
       if (writeQueue_.Empty()) {  // double check
         writeReady_ = false;
-        event->DelWriteEvent(id, fd);
+        event->DelWriteEvent(conn);
       }
     }
     return NE_OK;
@@ -43,7 +43,7 @@ int StreamSocket::OnWritable(uint64_t id, int fd, BaseEvent *event) {
       std::lock_guard lock(write_mutex_);
       if (writeQueue_.Empty()) {  // double check
         writeReady_ = false;
-        event->DelWriteEvent(id, fd);
+        event->DelWriteEvent(conn);
       }
       return NE_OK;
     }

@@ -25,9 +25,9 @@ class StreamSocket : public BaseSocket {
 
   int Init() override { return 1; };
 
-  int OnReadable(const std::shared_ptr<Connection> &conn, std::string *readBuff) override;
+  int OnReadable(Connection *conn, std::string *readBuff) override;
 
-  int OnWritable(uint64_t id, int fd, BaseEvent *event) override;
+  int OnWritable(Connection *conn, BaseEvent *event) override;
 
   void SendPacket(std::string &&msg, std::function<void()> addWriteFlag) override;
 
