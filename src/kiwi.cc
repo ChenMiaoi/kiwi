@@ -93,12 +93,12 @@ static void version() {
 // Handle the argc & argv
 bool KiwiDB::ParseArgs(int argc, char* argv[]) {
   static struct option long_options[] = {
-    {.name = "version", .has_arg = no_argument, .flag = nullptr, .val = 'v'},
-    {.name = "help", .has_arg = no_argument, .flag = nullptr, .val = 'h'},
-    {.name = "port", .has_arg = required_argument, .flag = nullptr, .val = 'p'},
-    {.name = "loglevel", .has_arg = required_argument, .flag = nullptr, .val = 'l'},
-    {.name = "slaveof", .has_arg = required_argument, .flag = nullptr, .val = 's'},
-    {.name = "redis-compatible-mode", .has_arg = no_argument, .flag = nullptr, .val = 'c'},
+      {.name = "version", .has_arg = no_argument, .flag = nullptr, .val = 'v'},
+      {.name = "help", .has_arg = no_argument, .flag = nullptr, .val = 'h'},
+      {.name = "port", .has_arg = required_argument, .flag = nullptr, .val = 'p'},
+      {.name = "loglevel", .has_arg = required_argument, .flag = nullptr, .val = 'l'},
+      {.name = "slaveof", .has_arg = required_argument, .flag = nullptr, .val = 's'},
+      {.name = "redis-compatible-mode", .has_arg = no_argument, .flag = nullptr, .val = 'c'},
   };
   // kiwi [/path/to/kiwi.conf] [options]
   if (argv == nullptr) {
