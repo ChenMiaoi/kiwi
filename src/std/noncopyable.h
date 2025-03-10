@@ -12,7 +12,7 @@ namespace kstd {
 class noncopyable {
  protected:
   noncopyable() = default;
-  ~noncopyable() = default;
+  virtual ~noncopyable() = default;
 
  private:
   noncopyable(const noncopyable&) = delete;
