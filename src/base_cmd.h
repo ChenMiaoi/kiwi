@@ -16,6 +16,7 @@
 #include <span>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "client.h"
@@ -346,7 +347,7 @@ class BaseCmdGroup : public BaseCmd {
 };
 
 struct BlockKey {  // this data struct is made for the scenario of multi dbs in kiwi.
-  BlockKey(int db_id, const std::string& key) : db_id_(db_id), key_(key) {}
+  BlockKey(int db_id, std::string key) : db_id_(db_id), key_(std::move(key)) {}
 
   int db_id_ = -1;
   std::string key_;

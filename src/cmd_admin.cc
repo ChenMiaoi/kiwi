@@ -97,7 +97,7 @@ void FlushdbCmd::DoCmd(PClient* client) {
     client->SetRes(CmdRes::kErrOther, "flushdb failed");
     return;
   }
-  auto f = std::async(std::launch::async, [&path_temp]() { kstd::DeleteDir(path_temp); });
+  [[maybe_unused]] auto f = std::async(std::launch::async, [&path_temp]() { kstd::DeleteDir(path_temp); });
   client->SetRes(CmdRes::kOK);
 }
 
@@ -117,7 +117,7 @@ void FlushallCmd::DoCmd(PClient* client) {
 
     auto s = STORE_INST.GetBackend(i)->Open();
     assert(s.ok());
-    auto f = std::async(std::launch::async, [&path_temp]() { kstd::DeleteDir(path_temp); });
+    [[maybe_unused]] auto f = std::async(std::launch::async, [&path_temp]() { kstd::DeleteDir(path_temp); });
     STORE_INST.GetBackend(i).get()->UnLock();
   }
   client->SetRes(CmdRes::kOK);
@@ -473,7 +473,7 @@ void InfoCmd::InfoServer(std::string& info) {
   tmp_stream << "run_id:" << static_cast<std::string>(g_config.run_id) << "\r\n";
   tmp_stream << "tcp_port:" << g_config.port << "\r\n";
   tmp_stream << "uptime_in_seconds:" << (current_time_s - g_kiwi->GetStartTime()) << "\r\n";
-  tmp_stream << "uptime_in_days:" << (current_time_s / (24 * 3600) - g_kiwi->GetStartTime() / (24 * 3600) + 1)
+  tmp_stream << "uptime_in_days:" << ((current_time_s / (24 * 3600)) - (g_kiwi->GetStartTime() / (24 * 3600)) + 1)
              << "\r\n";
   tmp_stream << "config_file:" << g_kiwi->GetConfigName() << "\r\n";
 
@@ -497,16 +497,16 @@ void InfoCmd::InfoCPU(std::string& info) {
   std::stringstream tmp_stream;
   tmp_stream << "# CPU" << "\r\n";
   tmp_stream << "used_cpu_sys:" << std::setiosflags(std::ios::fixed) << std::setprecision(2)
-             << static_cast<float>(self_ru.ru_stime.tv_sec) + static_cast<float>(self_ru.ru_stime.tv_usec) / 1000000
+             << static_cast<float>(self_ru.ru_stime.tv_sec) + (static_cast<float>(self_ru.ru_stime.tv_usec) / 1000000)
              << "\r\n";
   tmp_stream << "used_cpu_user:" << std::setiosflags(std::ios::fixed) << std::setprecision(2)
-             << static_cast<float>(self_ru.ru_utime.tv_sec) + static_cast<float>(self_ru.ru_utime.tv_usec) / 1000000
+             << static_cast<float>(self_ru.ru_utime.tv_sec) + (static_cast<float>(self_ru.ru_utime.tv_usec) / 1000000)
              << "\r\n";
   tmp_stream << "used_cpu_sys_children:" << std::setiosflags(std::ios::fixed) << std::setprecision(2)
-             << static_cast<float>(c_ru.ru_stime.tv_sec) + static_cast<float>(c_ru.ru_stime.tv_usec) / 1000000
+             << static_cast<float>(c_ru.ru_stime.tv_sec) + (static_cast<float>(c_ru.ru_stime.tv_usec) / 1000000)
              << "\r\n";
   tmp_stream << "used_cpu_user_children:" << std::setiosflags(std::ios::fixed) << std::setprecision(2)
-             << static_cast<float>(c_ru.ru_utime.tv_sec) + static_cast<float>(c_ru.ru_utime.tv_usec) / 1000000
+             << static_cast<float>(c_ru.ru_utime.tv_sec) + (static_cast<float>(c_ru.ru_utime.tv_usec) / 1000000)
              << "\r\n";
   info.append(tmp_stream.str());
 }
@@ -531,7 +531,7 @@ void InfoCmd::InfoCommandStats(PClient* client, std::string& info) {
   tmp_stream.setf(std::ios::fixed);
   tmp_stream << "# Commandstats" << "\r\n";
   auto cmdstat_map = client->GetCommandStatMap();
-  for (auto iter : *cmdstat_map) {
+  for (const auto& iter : *cmdstat_map) {
     if (iter.second.cmd_count_ != 0) {
       tmp_stream << iter.first << ":" << FormatCommandStatLine(iter.second);
     }
@@ -862,7 +862,7 @@ void CmdClientKill::DoCmd(PClient* client) {
     default:
       break;
   }
-  ret == true ? client->SetRes(CmdRes::kOK) : client->SetRes(CmdRes::kErrOther, "No such client");
+  ret ? client->SetRes(CmdRes::kOK) : client->SetRes(CmdRes::kErrOther, "No such client");
 }
 
 CmdClientList::CmdClientList(const std::string& name, int16_t arity)

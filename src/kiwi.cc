@@ -89,7 +89,7 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
     return false;
   }
   if (options_.GetConfigName().empty() && argc > 1 && argv[1] != nullptr) {
-    struct stat st {};
+    struct stat st{};
     if (stat(argv[1], &st) == 0 && S_ISREG(st.st_mode) && ::access(argv[1], R_OK) == 0) {
       options_.SetConfigName(argv[1]);
       argc = argc - 1;
@@ -99,7 +99,7 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
       return false;
     }
   }
-  while (1) {
+  while (true) {
     int this_option_optind = optind ? optind : 1;
     int option_index = 0;
     int c;
@@ -155,6 +155,11 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
         return false;
         break;
       }
+      default: {
+        std::cerr << "Unknow option " << std::endl;
+        return false;
+        break;
+      }
     }
   }
   return true;
@@ -201,7 +206,7 @@ void KiwiDB::ScanEvictedBlockedConnsOfBlrpop() {
 
 void KiwiDB::CleanBlockedNodes(const std::shared_ptr<kiwi::PClient>& client) {
   std::vector<kiwi::BlockKey> blocked_keys;
-  for (auto key : client->Keys()) {
+  for (const auto& key : client->Keys()) {
     blocked_keys.emplace_back(client->GetCurrentDB(), key);
   }
   auto& key_to_blocked_conns = g_kiwi->GetMapFromKeyToConns();
