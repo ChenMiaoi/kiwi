@@ -166,14 +166,13 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
         options_.SetRedisCompatibleMode(true);
         break;
       }
-      default:
       case '?': {
         std::cerr << "Unknow option \n";
         return false;
         break;
       }
       default: {
-        std::cerr << "Unknow option " << std::endl;
+        std::cerr << "Unknow option \n";
         return false;
         break;
       }
