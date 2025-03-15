@@ -396,25 +396,25 @@ void InfoCmd::DoCmd(PClient* client) {
 * INFO raft
 * Querying Node Information.
 * Reply:
-*   raft_node_id:595100767
+*   raft_group_id:629f074d91999a1830e26ac060bce411
+    raft_node_id:kiwi:127.0.0.1:9231:0:0
+    raft_peer_id:127.0.0.1:9231:0:0
     raft_state:up
-    raft_role:follower
-    raft_is_voting:yes
-    raft_leader_id:1733428433
-    raft_current_term:1
+    raft_role:LEADER
+    raft_leader_id:127.0.0.1:9231:0:0
+    raft_current_term:2
     raft_num_nodes:2
-    raft_num_voting_nodes:2
-    raft_node1:id=1733428433,state=connected,voting=yes,addr=localhost,port=5001,last_conn_secs=5,conn_errors=0,conn_oks=1
+    raft_node0:addr=127.0.0.1,port=9231
 */
-void InfoCmd::InfoRaft(std::string& message) {
+void InfoCmd::InfoRaft(std::string& info) {
   if (!RAFT_INST.IsInitialized()) {
-    message += "-ERR Not a cluster member.\r\n";
+    info += "-ERR Not a cluster member.\r\n";
     return;
   }
 
   auto node_status = RAFT_INST.GetNodeStatus();
   if (node_status.state == braft::State::STATE_END) {
-    message += "-ERR Node is not initialized.\r\n";
+    info += "-ERR Node is not initialized.\r\n";
     return;
   }
 
@@ -447,7 +447,7 @@ void InfoCmd::InfoRaft(std::string& message) {
     }
   }
 
-  message.append(tmp_stream.str());
+  info.append(tmp_stream.str());
 }
 
 void InfoCmd::InfoServer(std::string& info) {
