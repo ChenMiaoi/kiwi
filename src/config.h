@@ -90,7 +90,7 @@ class StringValueArray : public BaseValue {
 
   std::vector<std::string>* values_;
   char delimiter_ = 0;
-  bool mul_conf_argu_;
+  bool mul_conf_argu_ = false;
 };
 
 template <typename T>
