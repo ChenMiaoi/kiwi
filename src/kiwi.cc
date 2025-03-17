@@ -358,7 +358,7 @@ bool KiwiDB::Init() {
   }
 
   if (!options_.GetUseRaft().empty()) {
-    g_config.Set("use-raft", "yes", true);
+    g_config.Set("use-raft", options_.GetUseRaft(), true);
   }
 
   if (!options_.GetRaftIp().empty()) {
