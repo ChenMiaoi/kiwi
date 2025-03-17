@@ -4,7 +4,6 @@
 // of patent rights can be found in the PATENTS file in the same directory
 
 #include <fmt/format.h>
-#include "resp_encode.h"
 
 #include "resp2_encode.h"
 
