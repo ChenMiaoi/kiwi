@@ -525,7 +525,9 @@ int main(int argc, char* argv[]) {
     Usage();
     return -1;
   }
+#if BUILD_DEBUG
   PrintParsedFlags();
+#endif  //! BUILD_DEBUG
 
   if (!g_kiwi->GetConfigName().empty()) {
     if (!g_config.LoadFromFile(g_kiwi->GetConfigName())) {
