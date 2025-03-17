@@ -137,61 +137,7 @@ static inline void PrintParsedFlags() {
   std::cout << "  --Version: " << (FLAGS_Version ? "true" : "false") << "\n";
 }
 
-static inline bool IsValidIPv4(const std::vector<std::string>& addrs) {
-  if (addrs.size() != 4) {
-    return false;
-  }
-  for (const auto& s : addrs) {
-    if (s.empty() || s.length() > 3) {
-      return false;
-    }
-    for (const auto& c : s) {
-      if (!isdigit(c)) {
-        return false;
-      }
-    }
-    int x = stoi(s);
-    if (x < 0 || x > 255) {
-      return false;
-    }
-    if (s.length() > 1 && (s[0] == '0' || x == 0)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-static inline bool IsValidIPv6(const std::vector<std::string>& addrs) {
-  //! TODO should impl the ipv6 check
-  return true;
-}
-
-static inline bool CheckIPAddress(const std::string& ip) {
-  // int cnt4 = 0, cnt6 = 0;
-  // for (const auto& c : ip) {
-  //   cnt4 += c == '.';
-  //   cnt6 += c == ':';
-  // }
-  // if (cnt4 && cnt6 || !cnt4 && !cnt6 || cnt4 != 3 && !cnt6 || cnt6 != 7 && !cnt4) {
-  //   return false;
-  // }
-  // std::vector<std::string> addrs = SplitIPs(ip, (cnt4 ? "." : "::"));
-  bool isv4 = ip.find('.') != std::string::npos;
-  bool isv6 = ip.find(':') != std::string::npos;
-  if (!isv4 && !isv6) {
-    return false;
-  }
-  std::vector<std::string> addrs = SplitIPs(ip, isv4 ? "." : "::");
-
-  if (isv4) {
-    return IsValidIPv4(addrs);
-  } else {
-    return IsValidIPv6(addrs);
-  }
-}
-
 bool KiwiDB::ParseArgs(int argc, char* argv[]) {
-  // 解析 gflags 参数
   gflags::ParseCommandLineNonHelpFlags(&argc, &argv, true);
 
   if (FLAGS_usage) {
@@ -203,7 +149,6 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
     exit(EXIT_SUCCESS);
   }
 
-  // 设置解析的参数
   if (!FLAGS_config.empty()) {
     namespace fs = std::filesystem;
     std::filesystem::path config_path(FLAGS_config);
@@ -260,21 +205,11 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
   }
 
   if (!FLAGS_raft_ip.empty()) {
-    if (!CheckIPAddress(FLAGS_raft_ip)) {
-      std::cerr << "Invalid Raft IP address: " << FLAGS_raft_ip << "\n";
-      return false;
-    }
     options_.SetRaftIp(FLAGS_raft_ip);
   }
 
   if (!FLAGS_ips.empty()) {
     auto ips = SplitIPs(FLAGS_ips, " ");
-    for (const auto& ip : ips) {
-      if (!CheckIPAddress(ip)) {
-        std::cerr << "Invalid IP address: " << ip << "\n";
-        return false;
-      }
-    }
     options_.SetIps(ips);
   }
 
