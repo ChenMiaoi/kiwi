@@ -55,7 +55,7 @@ void BaseCmd::Execute(PClient* client) {
         return;
       }
 
-      client->SetRes(CmdRes::kErrOther, fmt::format("-MOVED {}", leader_addr));
+      client->SetRes(CmdRes::kErrMoved, leader_addr);
       return;
     }
   }

@@ -75,6 +75,9 @@ void Resp2Encode::SetRes(CmdRes ret, const std::string& content) {
     case CmdRes::kErrOther:
       AppendStringRaw(fmt::format("-ERR {}\r\n", content));
       break;
+    case CmdRes::kErrMoved:
+      AppendStringRaw(fmt::format("-MOVED {}\r\n", content));
+      break;
     case CmdRes::KIncrByOverFlow:
       AppendStringRaw(fmt::format("-ERR increment would produce NaN or Infinity {}\r\n", content));
       break;

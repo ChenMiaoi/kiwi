@@ -32,6 +32,7 @@ enum class CmdRes : std::int8_t {
   kInvalidDB,
   kInconsistentHashTag,
   kErrOther,
+  kErrMoved,
   kUnknownCmd,
   kUnknownSubCmd,
   KIncrByOverFlow,
