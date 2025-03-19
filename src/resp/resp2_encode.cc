@@ -77,6 +77,8 @@ void Resp2Encode::SetRes(CmdRes ret, const std::string& content) {
       break;
     case CmdRes::kErrMoved:
       AppendStringRaw(fmt::format("-MOVED {}\r\n", content));
+    case CmdRes::kErrClusterDown:
+      AppendStringRaw(fmt::format("-CLUSTERDOWN {}\r\n", content));
       break;
     case CmdRes::KIncrByOverFlow:
       AppendStringRaw(fmt::format("-ERR increment would produce NaN or Infinity {}\r\n", content));
