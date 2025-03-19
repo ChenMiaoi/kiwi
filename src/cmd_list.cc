@@ -8,8 +8,8 @@
  */
 
 #include "cmd_list.h"
-#include "src/scope_record_lock.h"
 #include "base_cmd.h"
+#include "src/scope_record_lock.h"
 #include "std_string.h"
 #include "store.h"
 
