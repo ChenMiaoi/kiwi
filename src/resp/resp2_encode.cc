@@ -17,7 +17,7 @@ void Resp2Encode::SetRes(CmdRes ret, const std::string& content) {
       SetLineString("+PONG");
       break;
     case CmdRes::kSyntaxErr:
-      SetLineString("-ERR syntax error");
+      AppendStringRaw(fmt::format("-ERR syntax error\r\n", content));
       break;
     case CmdRes::kUnknownCmd:
       AppendStringRaw(fmt::format("-ERR unknown command '{}'\r\n", content));
