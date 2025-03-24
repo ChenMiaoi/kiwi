@@ -83,13 +83,13 @@ static void Usage() {
   std::cerr << "  --ips                           List of IP addresses [x.x.x.x ::x::x::x::x ...]\n";
   std::cerr << "  --config                        Path to the configuration file\n";
   std::cerr << "Examples:\n";
-  std::cerr << "  kiwi /path/kiwi.conf\n";
-  std::cerr << "  kiwi /path/kiwi.conf --loglevel verbose\n";
+  std::cerr << "  kiwi --config /path/kiwi.conf\n";
+  std::cerr << "  kiwi --config /path/kiwi.conf --loglevel verbose\n";
   std::cerr << "  kiwi --port 7777\n";
   std::cerr << "  kiwi --port 7777 --slaveof 127.0.0.1:8888\n";
-  std::cerr << "  kiwi /path/kiwi.conf --use_raft [yes or no]\n";
-  std::cerr << "  kiwi /path/kiwi.conf --ips [x.x.x.x ::x::x::x::x ...]\n";
-  std::cerr << "  kiwi /path/kiwi.conf --raft_ip x.x.x.x\n";
+  std::cerr << "  kiwi --config /path/kiwi.conf --use_raft [yes or no]\n";
+  std::cerr << "  kiwi --config /path/kiwi.conf --ips [x.x.x.x ::x::x::x::x ...]\n";
+  std::cerr << "  kiwi --config /path/kiwi.conf --raft_ip x.x.x.x\n";
 }
 
 static void version() {
