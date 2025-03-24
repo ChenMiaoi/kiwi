@@ -69,7 +69,7 @@ static void Usage() {
   std::cerr << "kiwi is the kiwi server.\n";
   std::cerr << "\n";
   std::cerr << "Usage:\n";
-  std::cerr << "  kiwi [/path/to/kiwi.conf] [options]\n";
+  std::cerr << "  kiwi [--config] [/path/to/kiwi.conf] [options]\n";
   std::cerr << "\n";
   std::cerr << "Options:\n";
   std::cerr << "  -v, --Version                   output version information, then exit\n";
@@ -77,19 +77,19 @@ static void Usage() {
   std::cerr << "  -p PORT, --port PORT            Set the port to listen on\n";
   std::cerr << "  -l LEVEL, --loglevel LEVEL      Set the log level (e.g., info, debug, error)\n";
   std::cerr << "  -s ADDRESS, --slaveof ADDRESS   Set the slave address (e.g., 127.0.0.1:6380)\n";
-  std::cerr << "  -c, --redis_compatible_mode     Enable Redis compatibility mode\n";
-  std::cerr << "  --use_raft                      Whether to use Raft [yes or no]\n";
-  std::cerr << "  --raft_ip                       Raft IP address\n";
+  std::cerr << "  -c, --redis-compatible-mode     Enable Redis compatibility mode\n";
+  std::cerr << "  --use-raft                      Whether to use Raft [yes or no]\n";
+  std::cerr << "  --raft-ip                       Raft IP address\n";
   std::cerr << "  --ips                           List of IP addresses [x.x.x.x ::x::x::x::x ...]\n";
   std::cerr << "  --config                        Path to the configuration file\n";
   std::cerr << "Examples:\n";
-  std::cerr << "  kiwi --config /path/kiwi.conf\n";
-  std::cerr << "  kiwi --config /path/kiwi.conf --loglevel verbose\n";
+  std::cerr << "  kiwi [--config] /path/kiwi.conf\n";
+  std::cerr << "  kiwi [--config] /path/kiwi.conf --loglevel verbose\n";
   std::cerr << "  kiwi --port 7777\n";
   std::cerr << "  kiwi --port 7777 --slaveof 127.0.0.1:8888\n";
-  std::cerr << "  kiwi --config /path/kiwi.conf --use_raft [yes or no]\n";
-  std::cerr << "  kiwi --config /path/kiwi.conf --ips [x.x.x.x ::x::x::x::x ...]\n";
-  std::cerr << "  kiwi --config /path/kiwi.conf --raft_ip x.x.x.x\n";
+  std::cerr << "  kiwi [--config] /path/kiwi.conf --use_raft [yes or no]\n";
+  std::cerr << "  kiwi [--config] /path/kiwi.conf --ips [x.x.x.x ::x::x::x::x ...]\n";
+  std::cerr << "  kiwi [--config] /path/kiwi.conf --raft_ip x.x.x.x\n";
 }
 
 static void version() {
@@ -126,18 +126,28 @@ static inline std::vector<std::string> SplitIPs(const std::string& ips, const st
 static inline void PrintParsedFlags() {
   std::cout << "Parsed command-line flags:\n";
   std::cout << "  --config: " << FLAGS_config << "\n";
-  std::cout << "  --use_raft: " << FLAGS_use_raft << "\n";
+  std::cout << "  --use-raft: " << FLAGS_use_raft << "\n";
   std::cout << "  --ips: " << FLAGS_ips << "\n";
-  std::cout << "  --raft_ip: " << FLAGS_raft_ip << "\n";
+  std::cout << "  --raft-ip: " << FLAGS_raft_ip << "\n";
   std::cout << "  --port: " << FLAGS_port << "\n";
   std::cout << "  --loglevel: " << FLAGS_loglevel << "\n";
-  std::cout << "  --redis_compatible_mode: " << (FLAGS_redis_compatible_mode ? "true" : "false") << "\n";
+  std::cout << "  --redis-compatible-mode: " << (FLAGS_redis_compatible_mode ? "true" : "false") << "\n";
   std::cout << "  --slaveof: " << FLAGS_slaveof << "\n";
   std::cout << "  --usage: " << (FLAGS_usage ? "true" : "false") << "\n";
   std::cout << "  --Version: " << (FLAGS_Version ? "true" : "false") << "\n";
 }
 
 bool KiwiDB::ParseArgs(int argc, char* argv[]) {
+  PString conf_file;
+  if (argc > 1 && !std::string(argv[1]).starts_with('-')) {
+    conf_file = argv[1];
+
+    for (int i = 1; i < argc; ++i) {
+      argv[i] = argv[i + 1];
+    }
+    argc--;
+  }
+
   gflags::ParseCommandLineNonHelpFlags(&argc, &argv, true);
 
   if (FLAGS_usage) {
@@ -149,15 +159,20 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
     exit(EXIT_SUCCESS);
   }
 
+  // Overwrite the config
   if (!FLAGS_config.empty()) {
+    conf_file = FLAGS_config;
+  }
+
+  if (!conf_file.empty()) {
     namespace fs = std::filesystem;
-    std::filesystem::path config_path(FLAGS_config);
+    std::filesystem::path config_path(conf_file);
     if (fs::is_regular_file(config_path) &&
         (fs::status(config_path).permissions() & fs::perms::owner_read) != fs::perms::none) {
-      options_.SetConfigName(FLAGS_config);
-      std::cerr << "Configuration file path: [" << FLAGS_config << "]\n";
+      options_.SetConfigName(conf_file);
+      std::cerr << "Configuration file path: [" << conf_file << "]\n";
     } else {
-      std::cerr << "Configuration file [" << FLAGS_config << "]: " << strerror(errno) << "\n";
+      std::cerr << "Configuration file [" << conf_file << "]: " << strerror(errno) << "\n";
       return false;
     }
   } else {
