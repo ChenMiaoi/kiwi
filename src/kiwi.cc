@@ -83,6 +83,9 @@ static void Usage() {
   std::cerr << "  --ips                           List of IP addresses [x.x.x.x ::x::x::x::x ...]\n";
   std::cerr << "  --config                        Path to the configuration file\n";
   std::cerr << "Examples:\n";
+  std::cerr << "  kiwi --usage\n";
+  std::cerr << "  kiwi --Version\n";
+  std::cerr << "  kiwi [--config] /path/kiwi.conf\n";
   std::cerr << "  kiwi [--config] /path/kiwi.conf\n";
   std::cerr << "  kiwi [--config] /path/kiwi.conf --loglevel verbose\n";
   std::cerr << "  kiwi --port 7777\n";
@@ -181,7 +184,8 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
 
   if (FLAGS_port > 0) {
     if (FLAGS_port <= 1234) {
-      std::cerr << "You should have root privileges but now NOT support." << "\n";
+      std::cerr << "You should have root privileges but now NOT support."
+                << "\n";
       return false;
     }
     port_ = static_cast<uint16_t>(FLAGS_port);
@@ -190,7 +194,8 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
   if (!FLAGS_loglevel.empty()) {
     if (FLAGS_loglevel != "debug" && FLAGS_loglevel != "verbose" && FLAGS_loglevel != "notice" &&
         FLAGS_loglevel != "warning") {
-      std::cerr << "You must be choose one of [debug, verbose, notice, warning]." << "\n";
+      std::cerr << "You must be choose one of [debug, verbose, notice, warning]."
+                << "\n";
       return false;
     }
     options_.SetLogLevel(FLAGS_loglevel);
@@ -213,7 +218,8 @@ bool KiwiDB::ParseArgs(int argc, char* argv[]) {
     std::transform(FLAGS_use_raft.cbegin(), FLAGS_use_raft.cend(), FLAGS_use_raft.begin(),
                    [](unsigned char c) { return std::tolower(c); });
     if (FLAGS_use_raft != "yes" && FLAGS_use_raft != "no") {
-      std::cerr << "You should decide use-raft = yes or no" << "\n";
+      std::cerr << "You should decide use-raft = yes or no"
+                << "\n";
       return false;
     }
     options_.SetUseRaft(FLAGS_use_raft);
