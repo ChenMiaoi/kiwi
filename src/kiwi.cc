@@ -75,7 +75,7 @@ static void Usage() {
   std::cerr << "  -v, --Version                   output version information, then exit\n";
   std::cerr << "  -h, --usage                     output help message\n";
   std::cerr << "  -p PORT, --port PORT            Set the port to listen on\n";
-  std::cerr << "  -l LEVEL, --loglevel LEVEL      Set the log level (e.g., info, debug, error)\n";
+  std::cerr << "  -l LEVEL, --loglevel LEVEL      Set the log level (e.g., debug, verbose, notice, warning)\n";
   std::cerr << "  -s ADDRESS, --slaveof ADDRESS   Set the slave address (e.g., 127.0.0.1:6380)\n";
   std::cerr << "  -c, --redis-compatible-mode     Enable Redis compatibility mode\n";
   std::cerr << "  --use-raft                      Whether to use Raft [yes or no]\n";
